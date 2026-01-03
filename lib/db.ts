@@ -1,33 +1,22 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URL!;
+let isConnected = false;
 
-if(!MONGODB_URI){
-    throw new Error("Please define mongo_uri in env variables") 
-}
+export async function connectToDataBase() {
+  if (isConnected) return;
 
-let cached = global.mongoose
+  const MONGODB_URI = process.env.mongo_uri;
 
-if(!cached){
-    cached = global.mongoose = {conn:null, promise:null};
-}
+  if (!MONGODB_URI) {
+    console.warn("mongo_uri is not defined. Skipping DB connection.");
+    return;
+  }
 
-export async function connectToDataBase(){
-    if(cached.conn){
-        return cached.conn;
-    }
-    if(!cached.promise){
-        const opts = {
-            bufferCommands: true,
-            maxPoolSize:10,
-        };
-        mongoose.connect(MONGODB_URI, opts).then(()=> mongoose.connection);
-    }
-    try {
-        cached.conn = await cached.promise
-    } catch (error) {
-        cached.promise = null
-        throw error;
-    }
-    return cached.conn;
+  try {
+    await mongoose.connect(MONGODB_URI);
+    isConnected = true;
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error("MongoDB connection failed", error);
+  }
 }

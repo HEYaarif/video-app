@@ -19,9 +19,9 @@ export default function Header() {
   };
 
   return (
-    <div className="navbar bg-base-300 sticky top-0 z-40">
+    <div className="navbar bg-base-300 sticky top-0 z-40 bg-gradient-to-br from-indigo-900 to-blue-900 h-screen pt-5">
       <div className="container mx-auto">
-        <div className="flex-1 px-2 lg:flex-none">
+        <div className="flex-1 px-2 lg:flex-none justify-center">
           <Link
             href="/"
             className="btn btn-ghost text-xl gap-2 normal-case font-bold"

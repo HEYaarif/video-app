@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDataBase } from "./db";
 import User from "@/models/User";
@@ -9,42 +9,35 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "passsword" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing email or passsword");
+          return null;
         }
 
-        try {
-          await connectToDataBase();
-          const user = await User.findOne({ email: credentials.email });
+        await connectToDataBase();
 
-          if (!user) {
-            throw new Error("No user found with this");
-          }
+        const user = await User.findOne({ email: credentials.email });
+        if (!user) return null;
 
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            user.passsword
-          );
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password // ✅ FIXED
+        );
 
-          if (!isValid) {
-            throw new Error("invalid password");
-          }
+        if (!isValid) return null;
 
-          return {
-            id: user._id.toString(),
-            email: user.email,
-          };
-        } catch (error) {
-          console.error("Auth error: ", error);
-          throw error;
-        }
+        return {
+          id: user._id.toString(),
+          email: user.email,
+        };
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -52,6 +45,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
@@ -59,13 +53,16 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
   pages: {
     signIn: "/login",
     error: "/login",
   },
+
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
