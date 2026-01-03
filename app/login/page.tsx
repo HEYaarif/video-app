@@ -37,7 +37,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 to-blue-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-900 to-blue-900 px-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-xl p-8">
         <h1 className="text-3xl font-bold text-center text-white mb-2">
           Welcome Back
