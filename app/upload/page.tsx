@@ -21,7 +21,7 @@ export default function UploadReelPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-indigo-900 to-blue-900 flex items-center justify-center px-4">
       <div className="w-full max-w-2xl">
         <h1 className="text-white text-2xl font-semibold mb-6">
           Upload New Reel
